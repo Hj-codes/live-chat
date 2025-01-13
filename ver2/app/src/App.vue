@@ -8,6 +8,8 @@ const router = useRouter();
 const userStore = useUserStore();
 
 onMounted( async () => {
+    await userStore.monitorAuthState(userStore);
+
     if (userStore.user) {
         await router.push('/chatroom');
     } else {
@@ -23,6 +25,7 @@ onMounted( async () => {
     <h1> Welcome to the Live Chat App </h1>
     <RouterLink to="/login">Login</RouterLink>
     <RouterLink to="/chatroom">Chat Room</RouterLink>
+    <RouterLink v-show="!userStore.user" to="/signup">Sign Up</RouterLink>
     <LogOut v-show="userStore.user"/>
 </nav>
 <main>
@@ -42,4 +45,3 @@ nav > a + a {
 }
 
 </style>
-

@@ -2,7 +2,6 @@
     import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
     import { db, auth } from '@/firebase';
     import { ref, onMounted } from 'vue';
-    // import { useAuthStore } from '@/stores/authStore';
 
     const messages = ref([]);
     const newMessage = ref('');
@@ -43,4 +42,3 @@
     </form>
   </div>
 </template>
-

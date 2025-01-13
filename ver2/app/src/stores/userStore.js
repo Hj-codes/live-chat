@@ -1,5 +1,5 @@
 import { auth, googleProvider, signInWithPopup, signOut } from '@/firebase';
-import { setPersistence, browserSessionPersistence, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { setPersistence, createUserWithEmailAndPassword, browserLocalPersistence, onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 import { defineStore } from 'pinia';
 
 export const useUserStore = defineStore('user', {
@@ -9,10 +9,25 @@ export const useUserStore = defineStore('user', {
         error: null,
     }),
     actions: {
+        async signUp(email, password) {
+            this.loading = true;
+            try {
+                this.error = null;
+                const user = await createUserWithEmailAndPassword(auth, email, password);
+                this.user = user;
+            }
+            catch (error) {
+                this.error = error;
+            }
+            finally {
+                this.loading = false;
+            }
+        },
+        
         async login(email, password) {
             this.loading = true;
-            await setPersistence(auth, browserSessionPersistence);
             try {
+                await setPersistence(auth, browserLocalPersistence);
                 this.error = null;
                 const user = await signInWithEmailAndPassword(auth, email, password);
                 this.user = user;
@@ -25,8 +40,8 @@ export const useUserStore = defineStore('user', {
         
         async googleLogin() {
             this.loading = true;
-            await setPersistence(auth, browserSessionPersistence);
             try {
+                await setPersistence(auth, browserLocalPersistence)
                 this.error = null;
                 const user = await signInWithPopup(auth, googleProvider);
                 this.user = user;
@@ -50,10 +65,10 @@ export const useUserStore = defineStore('user', {
             }
         },
 
-        const monitorAuthState = (store) => {
+        monitorAuthState(store) {
             onAuthStateChanged(auth, (user) => {
               store.user = user ? user : null;
             });
-        };
+        },
     },
 });
